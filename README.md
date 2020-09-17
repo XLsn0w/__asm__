@@ -1,4 +1,13 @@
-### __asm__ 嵌入汇编代码
+## 嵌入汇编代码(__asm__)
+```
+int add(int num) {//内嵌汇编
+    __asm__ __volatile__(
+        "lsl x0, x0, 1\n"
+        "str x0, [sp, #12]\n"
+    );
+    return num;
+}
+```
 
 XNU内核是Darwin操作系统的一部分，可在macOS和iOS操作系统中使用。 
 
