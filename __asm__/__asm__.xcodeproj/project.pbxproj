@@ -37,6 +37,11 @@
 		78C5BC552511F20000E8DB25 /* fishhook.h in Headers */ = {isa = PBXBuildFile; fileRef = 78C5BC542511F20000E8DB25 /* fishhook.h */; };
 		78C5BC572511F20000E8DB25 /* __asm__Dylib.h in Headers */ = {isa = PBXBuildFile; fileRef = 78C5BC562511F20000E8DB25 /* __asm__Dylib.h */; };
 		78C5BC592511F20000E8DB25 /* __asm__Dylib.m in Sources */ = {isa = PBXBuildFile; fileRef = 78C5BC582511F20000E8DB25 /* __asm__Dylib.m */; };
+		78C5BC642511F3DA00E8DB25 /* Cpp.h in Headers */ = {isa = PBXBuildFile; fileRef = 78C5BC622511F3DA00E8DB25 /* Cpp.h */; };
+		78C5BC652511F3DA00E8DB25 /* Cpp.mm in Sources */ = {isa = PBXBuildFile; fileRef = 78C5BC632511F3DA00E8DB25 /* Cpp.mm */; };
+		78C5BC682511F80300E8DB25 /* Assembly.h in Headers */ = {isa = PBXBuildFile; fileRef = 78C5BC662511F80300E8DB25 /* Assembly.h */; };
+		78C5BC692511F80300E8DB25 /* Assembly.m in Sources */ = {isa = PBXBuildFile; fileRef = 78C5BC672511F80300E8DB25 /* Assembly.m */; };
+		78C5BC6B25120D6700E8DB25 /* Assembly.s in Sources */ = {isa = PBXBuildFile; fileRef = 78C5BC6A25120D6700E8DB25 /* Assembly.s */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -101,6 +106,11 @@
 		78C5BC542511F20000E8DB25 /* fishhook.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = fishhook.h; sourceTree = "<group>"; };
 		78C5BC562511F20000E8DB25 /* __asm__Dylib.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = __asm__Dylib.h; sourceTree = "<group>"; };
 		78C5BC582511F20000E8DB25 /* __asm__Dylib.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = __asm__Dylib.m; sourceTree = "<group>"; };
+		78C5BC622511F3DA00E8DB25 /* Cpp.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Cpp.h; sourceTree = "<group>"; };
+		78C5BC632511F3DA00E8DB25 /* Cpp.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = Cpp.mm; sourceTree = "<group>"; };
+		78C5BC662511F80300E8DB25 /* Assembly.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Assembly.h; sourceTree = "<group>"; };
+		78C5BC672511F80300E8DB25 /* Assembly.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Assembly.m; sourceTree = "<group>"; };
+		78C5BC6A25120D6700E8DB25 /* Assembly.s */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.asm; path = Assembly.s; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -194,6 +204,11 @@
 			children = (
 				78C5BC562511F20000E8DB25 /* __asm__Dylib.h */,
 				78C5BC582511F20000E8DB25 /* __asm__Dylib.m */,
+				78C5BC6A25120D6700E8DB25 /* Assembly.s */,
+				78C5BC662511F80300E8DB25 /* Assembly.h */,
+				78C5BC672511F80300E8DB25 /* Assembly.m */,
+				78C5BC622511F3DA00E8DB25 /* Cpp.h */,
+				78C5BC632511F3DA00E8DB25 /* Cpp.mm */,
 				78C5BC1E2511F20000E8DB25 /* Logos */,
 				78C5BC222511F20000E8DB25 /* Config */,
 				78C5BC2F2511F20000E8DB25 /* Trace */,
@@ -290,10 +305,12 @@
 				78C5BC282511F20000E8DB25 /* MDCycriptManager.h in Headers */,
 				78C5BC2C2511F20000E8DB25 /* MDMethodTrace.h in Headers */,
 				78C5BC552511F20000E8DB25 /* fishhook.h in Headers */,
+				78C5BC642511F3DA00E8DB25 /* Cpp.h in Headers */,
 				78C5BC492511F20000E8DB25 /* LLDBTools.h in Headers */,
 				78C5BC242511F20000E8DB25 /* MDConfigManager.h in Headers */,
 				78C5BC572511F20000E8DB25 /* __asm__Dylib.h in Headers */,
 				78C5BC432511F20000E8DB25 /* OCSelectorTrampolines.h in Headers */,
+				78C5BC682511F80300E8DB25 /* Assembly.h in Headers */,
 				78C5BC3F2511F20000E8DB25 /* OCMethodTrace.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -456,6 +473,7 @@
 				78C5BC2A2511F20000E8DB25 /* MDCycriptManager.m in Sources */,
 				78C5BC332511F20000E8DB25 /* a1a2-selectortramps-arm64.s in Sources */,
 				78C5BC312511F20000E8DB25 /* a1a2-selectortramps-arm.s in Sources */,
+				78C5BC6B25120D6700E8DB25 /* Assembly.s in Sources */,
 				78C5BC372511F20000E8DB25 /* a1a2-selectortramps-x86_64.s in Sources */,
 				78C5BC412511F20000E8DB25 /* OCMethodTrace.m in Sources */,
 				78C5BC262511F20000E8DB25 /* MDConfigManager.m in Sources */,
@@ -468,6 +486,8 @@
 				78C5BC392511F20000E8DB25 /* a2a3-selectortramps-arm.s in Sources */,
 				78C5BC212511F20000E8DB25 /* __asm__Dylib.mm in Sources */,
 				78C5BC4B2511F20000E8DB25 /* LLDBTools.mm in Sources */,
+				78C5BC692511F80300E8DB25 /* Assembly.m in Sources */,
+				78C5BC652511F3DA00E8DB25 /* Cpp.mm in Sources */,
 				78C5BC3D2511F20000E8DB25 /* a2a3-selectortramps-x86_64.s in Sources */,
 				78C5BC2E2511F20000E8DB25 /* MDMethodTrace.m in Sources */,
 			);
