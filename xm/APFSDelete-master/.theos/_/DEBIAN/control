@@ -1,0 +1,10 @@
+Package: cn.cydia.apfsdeleter
+Name: APFS删除工具
+Architecture: iphoneos-arm
+Description:  删除一个APFS分区
+Maintainer: 公众号:Cydia
+Author: XCXiao
+Section: System
+Tag: role::hacker
+Version: 1.0.0
+Installed-Size: 132

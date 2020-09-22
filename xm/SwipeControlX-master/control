@@ -1,0 +1,9 @@
+Package: cn.cydia.swipex
+Name: iPhone X滑动手势
+Depends: mobilesubstrate
+Version: 1.0.0
+Architecture: iphoneos-arm
+Description: iPhone X滑动手势
+Maintainer: Cydia
+Author: Cydia
+Section: Tweaks

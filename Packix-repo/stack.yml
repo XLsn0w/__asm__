@@ -1,0 +1,560 @@
+version: '3.5'
+networks:
+  default:
+  traefik_net:
+    driver: overlay
+  agent_network:
+    driver: overlay
+volumes:
+  portainer_data:
+      driver: local
+services:
+  redis:
+    image: redis:alpine
+    networks:
+      - default
+    deploy:
+      replicas: 1
+      update_config:
+        parallelism: 2
+        delay: 10s
+      restart_policy:
+        condition: on-failure
+      placement:
+        constraints: [node.role == manager]
+  memcached:
+    image: "packix/packix_memcached:latest"
+    networks:
+      - default
+    environment:
+      - MEMCACHED_CACHE_SIZE=6000
+      - MEMCACHED_ITEM_SIZE=${MEMCACHED_ITEM_SIZE}
+    expose:
+      - 11211
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+      placement:
+        constraints:
+        - node.role == worker
+        - node.hostname == memcache
+  memcached-1:
+    image: "packix/packix_memcached:latest"
+    networks:
+      - default
+    environment:
+      - MEMCACHED_CACHE_SIZE=1500
+      - MEMCACHED_ITEM_SIZE=${MEMCACHED_ITEM_SIZE}
+    expose:
+      - 11211
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+      placement:
+        constraints:
+        - node.role == worker
+        - node.hostname == memcache-1
+  memcached-2:
+    image: "packix/packix_memcached:latest"
+    networks:
+      - default
+    environment:
+      - MEMCACHED_CACHE_SIZE=1500
+      - MEMCACHED_ITEM_SIZE=${MEMCACHED_ITEM_SIZE}
+    expose:
+      - 11211
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+      placement:
+        constraints:
+        - node.role == worker
+        - node.hostname == memcache-2
+  debserver:
+    image: "packix/packix_debserver:latest"
+    networks:
+      - default
+    environment:
+      - PORT=3000
+      - NODE_ENV=production
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+      placement:
+        constraints:
+        - node.role == worker
+        - node.hostname == memcache
+  traefik:
+    image: traefik:alpine
+    command: --entryPoints="Name:http Address::80 Redirect.EntryPoint:https" \
+             --entryPoints="Name:https Address::443 TLS" \
+             --entrypoints="Name:traefik Address::8080" \
+             --defaultentrypoints="https,http" \
+             --acme \
+             --acme.acmelogging \
+             --acme.email="${ADMIN_EMAIL}" \
+             --acme.entrypoint="https" \
+             --acme.dnschallenge \
+             --acme.dnschallenge.provider=cloudflare \
+             --acme.storage=/etc/traefik/acme.json \
+             --acme.onhostrule="true" \
+             --docker \
+             --docker.swarmmode="true" \
+             --acme.domains="${HOST_URL},traefik.${BASE_HOST_URL},portainer.${BASE_HOST_URL},developer.${BASE_HOST_URL}" \
+             --docker.domain="${HOST_URL}" \
+             --docker.watch="true" \
+             --api \
+             --api.dashboard="true" \
+             --api.entrypoint="traefik" \
+             --api.statistics \
+             --api.statistics.recentErrors="30" \
+             --logLevel=INFO
+    ports:
+     - target: 80
+       published: 80
+       protocol: tcp
+       mode: host
+     - target: 443
+       published: 443
+       protocol: tcp
+       mode: host
+    environment:
+      - CLOUDFLARE_EMAIL=${CLOUDFLARE_EMAIL}
+      - CLOUDFLARE_API_KEY=${CLOUDFLARE_API_KEY}
+    networks:
+      - traefik_net
+    volumes:
+      - ./docker/traefik:/etc/traefik/
+      - /var/run/docker.sock:/var/run/docker.sock
+    deploy:
+      mode: global
+      restart_policy:
+        condition: any
+      placement:
+        constraints: [node.role == manager]
+      labels:
+        traefik.enable: "true"
+        traefik.frontend.rule: "Host:traefik.${BASE_HOST_URL}"
+        traefik.port: "8080"
+        traefik.backend: "${COMPOSE_PROJECT_NAME}_traefik"
+        traefik.docker.network: "${COMPOSE_PROJECT_NAME}_traefik_net"
+  agent:
+    image: portainer/agent
+    networks:
+      - agent_network
+    environment:
+      AGENT_CLUSTER_ADDR: tasks.agent
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    deploy:
+      mode: global
+  portainer:
+    image: portainer/portainer:latest
+    command: -H tcp://tasks.agent:9001 --tlsskipverify --admin-password '${PORTAINER_ADMIN_PASSWORD}'
+    networks:
+      - agent_network
+      - traefik_net
+    volumes:
+      - portainer_data:/data
+    deploy:
+      mode: replicated
+      replicas: 1
+      restart_policy:
+        condition: any
+      placement:
+        constraints: [node.role == manager]
+      labels:
+        traefik.backend: "${COMPOSE_PROJECT_NAME}_portainer"
+        traefik.frontend.rule: "Host:portainer.${BASE_HOST_URL}"
+        traefik.port: "9000"
+        traefik.docker.network: "${COMPOSE_PROJECT_NAME}_traefik_net"
+        traefik.enable: "true"
+  backend:
+    image: "packix/packix_backend"
+    environment:
+      - NODE_ENV=production
+      - API_DATASTORE_TYPE=MongoDB
+      - MONGODB_HOST=${MONGODB_HOST}
+      - MONGODB_PORT=${MONGODB_PORT}
+      - MONGODB_USERNAME=${MONGODB_USERNAME}
+      - MONGODB_PASSWORD=${MONGODB_PASSWORD}
+      - MONGODB_DATABASE=${MONGODB_DATABASE}
+      - MONGODB_AUTH_DATABASE=${MONGODB_AUTH_DATABASE}
+      - MONGODB_CONNECTION_URL=mongodb://${MONGODB_USERNAME}:${MONGODB_PASSWORD}@${MONGODB_HOST}:${MONGODB_PORT}/${MONGODB_DATABASE}?authSource=${MONGODB_AUTH_DATABASE}
+      - FILE_DATASTORE_TYPE=GridFS
+      - USE_GOOGLE_LOGIN=YES
+      - GOOGLE_LOGIN_CLIENT_ID=${GOOGLE_LOGIN_CLIENT_ID}
+      - GOOGLE_LOGIN_CLIENT_SECRET=${GOOGLE_LOGIN_CLIENT_SECRET}
+      - USE_FACEBOOK_LOGIN=YES
+      - FACEBOOK_LOGIN_CLIENT_ID=${FACEBOOK_LOGIN_CLIENT_ID}
+      - FACEBOOK_LOGIN_CLIENT_SECRET=${FACEBOOK_LOGIN_CLIENT_SECRET}
+      - USE_DISCORD_LOGIN=YES
+      - DISCORD_LOGIN_CLIENT_ID=${DISCORD_LOGIN_CLIENT_ID}
+      - DISCORD_LOGIN_CLIENT_SECRET=${DISCORD_LOGIN_CLIENT_SECRET}
+      - USE_PATREON_LOGIN=YES
+      - PATREON_LOGIN_CLIENT_ID=${PATREON_LOGIN_CLIENT_ID}
+      - PATREON_LOGIN_CLIENT_SECRET=${PATREON_LOGIN_CLIENT_SECRET}
+      - USE_TWITTER_LOGIN=YES
+      - TWITTER_LOGIN_CLIENT_ID=${TWITTER_LOGIN_CLIENT_ID}
+      - TWITTER_LOGIN_CLIENT_SECRET=${TWITTER_LOGIN_CLIENT_SECRET}
+      - COOKIE_SECRET=${COOKIE_SECRET}
+      - PACKAGES_CONTAINER_NAME=packages
+      - HOST_URL=${HOST_URL}
+      - ADMIN_EMAIL=${ADMIN_EMAIL}
+      - PORT=8081
+      - REPOSITORY_NAME=${REPOSITORY_NAME}
+      - REPOSITORY_CODENAME=${REPOSITORY_CODENAME}
+      - REPOSITORY_DESCRIPTION=${REPOSITORY_DESCRIPTION}
+      - REPOSITORY_SUPPORT_URL=https://${HOST_URL}
+      - SMTP_EMAIL=packix-gift@${HOST_URL}
+      - SMTP_NAME=Packix Repository
+      - SENDGRID_API_KEY=${SENDGRID_API_KEY}
+      - sdk_url=https://${HOST_URL}
+      - DOCKER_BUILDING=0
+      - GOOGLE_ANALYTICS_TRACKING_ID=${GOOGLE_ANALYTICS_TRACKING_ID}
+      - REDIS_HOST=${COMPOSE_PROJECT_NAME}_redis
+      - REDIS_PORT=6379
+      - MEMCACHED_HOST=${COMPOSE_PROJECT_NAME}_memcached
+      - MEMCACHED_HOSTS=${COMPOSE_PROJECT_NAME}_memcached
+      - MEMCACHED_PORT=${MEMCACHED_PORT}
+      - MEMCACHED_USERNAME=$MEMCACHED_USERNAME}
+      - MEMCACHED_PASSWORD=${MEMCACHED_PASSWORD}
+      - MEMCACHED_TOUCHAFTER=${MEMCACHED_TOUCHAFTER}
+      - SESSION_AGE=${SESSION_AGE}
+      - SILEO_APP_PREFIX=${SILEO_APP_PREFIX}
+      - CLOUDFLARE_EMAIL=${CLOUDFLARE_EMAIL}
+      - CLOUDFLARE_API_KEY=${CLOUDFLARE_API_KEY}
+      - CLOUDFLARE_ZONE_ID=${CLOUDFLARE_ZONE_ID}
+      - DEB_SERVER_HOST=${COMPOSE_PROJECT_NAME}_debserver
+      - DEB_SERVER_PORT=3000
+      - BASE_HOST_URL=${BASE_HOST_URL}
+      - COOKIE_DOMAIN=.${BASE_HOST_URL}
+      - REPO_MAIN_URL=${REPO_MAIN_URL}
+      - DEVELOPER_PANEL_URL=${DEVELOPER_PANEL_URL}
+      - AWS_S3_REGION=${AWS_S3_REGION}
+      - AWS_S3_ACCESS_KEY_ID=${AWS_S3_ACCESS_KEY_ID}
+      - AWS_S3_ACCESS_KEY_SECRET=${AWS_S3_ACCESS_KEY_SECRET}
+    depends_on:
+      - redis
+      - memcached
+      - memcached-1
+      - memcached-2
+      - debserver
+    networks:
+      - default
+      - traefik_net
+    deploy:
+      placement:
+        constraints:
+        - node.role == worker
+        - node.hostname != memcache
+        - node.hostname != memcache-1
+        - node.hostname != memcache-2
+        - node.hostname != extra-1
+        - node.hostname != packagebackground-1
+      mode: global
+      update_config:
+        parallelism: 2
+      restart_policy:
+        condition: any
+      labels:
+        traefik.backend.healthcheck.path: "/Packages.gz"
+        traefik.backend.healthcheck.interval: "10s"
+        traefik.backend: "${COMPOSE_PROJECT_NAME}_backend"
+        traefik.frontend.rule: "Host:${HOST_URL};PathPrefix:/package/{packageId}/info,/package/{packageId}/patreon,/purchase_list,/package/{packageId}/purchase,/api,/Packages,/./Packages,/./Release,/Release,/InRelease,/./InRelease,/explorer,/login,/info,/payment_endpoint,/check_auth_token,/authenticate,/sign_out"
+        traefik.port: "8081"
+        traefik.docker.network: "${COMPOSE_PROJECT_NAME}_traefik_net"
+        traefik.enable: "true"
+  client:
+    image: "packix/packix_client"
+    environment:
+      - NODE_ENV=production
+      - PORT=8083
+      - HOST_URL=${HOST_URL}
+      - COOKIE_SECRET=${COOKIE_SECRET}
+      - MONGODB_HOST=${MONGODB_HOST}
+      - MONGODB_DATABASE=${MONGODB_DATABASE}
+      - MONGODB_USERNAME=${MONGODB_USERNAME}
+      - MONGODB_AUTH_DATABASE=${MONGODB_AUTH_DATABASE}
+      - MONGODB_CONNECTION_URL=mongodb://${MONGODB_USERNAME}:${MONGODB_PASSWORD}@${MONGODB_HOST}:${MONGODB_PORT}/${MONGODB_DATABASE}?authSource=${MONGODB_AUTH_DATABASE}
+      - MEMCACHED_HOST=${COMPOSE_PROJECT_NAME}_memcached
+      - MEMCACHED_HOSTS=${COMPOSE_PROJECT_NAME}_memcached
+      - MEMCACHED_PORT=${MEMCACHED_PORT}
+      - MEMCACHED_USERNAME=$MEMCACHED_USERNAME}
+      - MEMCACHED_PASSWORD=${MEMCACHED_PASSWORD}
+      - MEMCACHED_TOUCHAFTER=${MEMCACHED_TOUCHAFTER}
+      - SESSION_AGE=${SESSION_AGE}
+      - DOCKER_BUILDING=0
+      - GOOGLE_ANALYTICS_TRACKING_ID=${GOOGLE_ANALYTICS_TRACKING_ID}
+      - BASE_HOST_URL=${BASE_HOST_URL}
+      - COOKIE_DOMAIN=.${BASE_HOST_URL}
+    depends_on:
+      - memcached
+      - memcached-1
+      - memcached-2
+      - backend
+    networks:
+      - default
+      - traefik_net
+    deploy:
+      placement:
+        constraints:
+        - node.role == worker
+        - node.hostname != memcache
+        - node.hostname != memcache-1
+        - node.hostname != memcache-2
+        - node.hostname != extra-1
+        - node.hostname != packagebackground-1
+      mode: global
+      update_config:
+        parallelism: 2
+      restart_policy:
+        condition: any
+        delay: 10s
+      labels:
+        traefik.backend: "${COMPOSE_PROJECT_NAME}_client"
+        traefik.frontend.rule: "Host:${HOST_URL};"
+        traefik.port: "8083"
+        traefik.docker.network: "${COMPOSE_PROJECT_NAME}_traefik_net"
+        traefik.enable: "true"
+  admin:
+    image: "packix/packix_admin"
+    environment:
+      - NODE_ENV=production
+      - COOKIE_SECRET=${COOKIE_SECRET}
+      - MONGODB_HOST=${MONGODB_HOST}
+      - MONGODB_PORT=${MONGODB_PORT}
+      - MONGODB_DATABASE=${MONGODB_DATABASE}
+      - MONGODB_USERNAME=${MONGODB_USERNAME}
+      - MONGODB_AUTH_DATABASE=${MONGODB_AUTH_DATABASE}
+      - MONGODB_CONNECTION_URL=mongodb://${MONGODB_USERNAME}:${MONGODB_PASSWORD}@${MONGODB_HOST}:${MONGODB_PORT}/${MONGODB_DATABASE}?authSource=${MONGODB_AUTH_DATABASE}
+      - MEMCACHED_HOST=${COMPOSE_PROJECT_NAME}_memcached
+      - MEMCACHED_HOSTS=${COMPOSE_PROJECT_NAME}_memcached
+      - MEMCACHED_PORT=${MEMCACHED_PORT}
+      - MEMCACHED_USERNAME=$MEMCACHED_USERNAME}
+      - MEMCACHED_PASSWORD=${MEMCACHED_PASSWORD}
+      - MEMCACHED_TOUCHAFTER=${MEMCACHED_TOUCHAFTER}
+      - SESSION_AGE=${SESSION_AGE}
+      - PORT=8086
+      - DOCKER_BUILDING=0
+      - BASE_HOST_URL=${BASE_HOST_URL}
+      - COOKIE_DOMAIN=.${BASE_HOST_URL}
+    depends_on:
+      - memcached
+      - memcached-1
+      - memcached-2
+      - backend
+    networks:
+      - default
+      - traefik_net
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+        - node.role == manager
+      restart_policy:
+        condition: any
+        delay: 10s
+      labels:
+        traefik.backend.healthcheck.path: "/"
+        traefik.backend.healthcheck.interval: "60s"
+        traefik.backend: "${COMPOSE_PROJECT_NAME}_admin"
+        traefik.frontend.rule: "Host:developer.${BASE_HOST_URL}"
+        traefik.port: "8086"
+        traefik.docker.network: "${COMPOSE_PROJECT_NAME}_traefik_net"
+        traefik.enable: "true"
+  background:
+    image: "packix/packix_backend"
+    command: "node server/background_script.js"
+    environment:
+      - NODE_ENV=production
+      - API_DATASTORE_TYPE=MongoDB
+      - MONGODB_HOST=${MONGODB_HOST}
+      - MONGODB_PORT=${MONGODB_PORT}
+      - MONGODB_USERNAME=${MONGODB_USERNAME}
+      - MONGODB_PASSWORD=${MONGODB_PASSWORD}
+      - MONGODB_DATABASE=${MONGODB_DATABASE}
+      - MONGODB_AUTH_DATABASE=${MONGODB_AUTH_DATABASE}
+      - MONGODB_CONNECTION_URL=mongodb://${MONGODB_USERNAME}:${MONGODB_PASSWORD}@${MONGODB_HOST}:${MONGODB_PORT}/${MONGODB_DATABASE}?authSource=${MONGODB_AUTH_DATABASE}&maxPoolSize=1000
+      - FILE_DATASTORE_TYPE=GridFS
+      - USE_GOOGLE_LOGIN=YES
+      - GOOGLE_LOGIN_CLIENT_ID=${GOOGLE_LOGIN_CLIENT_ID}
+      - GOOGLE_LOGIN_CLIENT_SECRET=${GOOGLE_LOGIN_CLIENT_SECRET}
+      - USE_FACEBOOK_LOGIN=YES
+      - FACEBOOK_LOGIN_CLIENT_ID=${FACEBOOK_LOGIN_CLIENT_ID}
+      - FACEBOOK_LOGIN_CLIENT_SECRET=${FACEBOOK_LOGIN_CLIENT_SECRET}
+      - USE_DISCORD_LOGIN=YES
+      - DISCORD_LOGIN_CLIENT_ID=${DISCORD_LOGIN_CLIENT_ID}
+      - DISCORD_LOGIN_CLIENT_SECRET=${DISCORD_LOGIN_CLIENT_SECRET}
+      - USE_PATREON_LOGIN=YES
+      - PATREON_LOGIN_CLIENT_ID=${PATREON_LOGIN_CLIENT_ID}
+      - PATREON_LOGIN_CLIENT_SECRET=${PATREON_LOGIN_CLIENT_SECRET}
+      - USE_TWITTER_LOGIN=YES
+      - TWITTER_LOGIN_CLIENT_ID=${TWITTER_LOGIN_CLIENT_ID}
+      - TWITTER_LOGIN_CLIENT_SECRET=${TWITTER_LOGIN_CLIENT_SECRET}
+      - COOKIE_SECRET=${COOKIE_SECRET}
+      - PACKAGES_CONTAINER_NAME=packages
+      - HOST_URL=${HOST_URL}
+      - ADMIN_EMAIL=${ADMIN_EMAIL}
+      - PORT=8081
+      - REPOSITORY_NAME=${REPOSITORY_NAME}
+      - REPOSITORY_CODENAME=${REPOSITORY_CODENAME}
+      - REPOSITORY_DESCRIPTION=${REPOSITORY_DESCRIPTION}
+      - REPOSITORY_SUPPORT_URL=https://${HOST_URL}
+      - SMTP_EMAIL=packix-gift@${HOST_URL}
+      - SMTP_NAME=Packix Repository
+      - SENDGRID_API_KEY=${SENDGRID_API_KEY}
+      - sdk_url=https://${HOST_URL}
+      - DOCKER_BUILDING=0
+      - GOOGLE_ANALYTICS_TRACKING_ID=${GOOGLE_ANALYTICS_TRACKING_ID}
+      - REDIS_HOST=${COMPOSE_PROJECT_NAME}_redis
+      - REDIS_PORT=6379
+      - MEMCACHED_HOST=${COMPOSE_PROJECT_NAME}_memcached
+      - MEMCACHED_HOSTS=${COMPOSE_PROJECT_NAME}_memcached
+      - MEMCACHED_PORT=${MEMCACHED_PORT}
+      - MEMCACHED_USERNAME=$MEMCACHED_USERNAME}
+      - MEMCACHED_PASSWORD=${MEMCACHED_PASSWORD}
+      - MEMCACHED_TOUCHAFTER=${MEMCACHED_TOUCHAFTER}
+      - SESSION_AGE=${SESSION_AGE}
+      - SILEO_APP_PREFIX=${SILEO_APP_PREFIX}
+      - CLOUDFLARE_EMAIL=${CLOUDFLARE_EMAIL}
+      - CLOUDFLARE_API_KEY=${CLOUDFLARE_API_KEY}
+      - CLOUDFLARE_ZONE_ID=${CLOUDFLARE_ZONE_ID}
+      - DEB_SERVER_HOST=${COMPOSE_PROJECT_NAME}_debserver
+      - DEB_SERVER_PORT=3000
+      - IS_BACKGROUND_SERVER=NO
+      - BASE_HOST_URL=${BASE_HOST_URL}
+      - COOKIE_DOMAIN=.${BASE_HOST_URL}
+      - REPO_MAIN_URL=${REPO_MAIN_URL}
+      - DEVELOPER_PANEL_URL=${DEVELOPER_PANEL_URL}
+      - AWS_S3_REGION=${AWS_S3_REGION}
+      - AWS_S3_ACCESS_KEY_ID=${AWS_S3_ACCESS_KEY_ID}
+      - AWS_S3_ACCESS_KEY_SECRET=${AWS_S3_ACCESS_KEY_SECRET}
+    depends_on:
+      - redis
+      - memcached
+      - memcached-1
+      - memcached-2
+      - debserver
+    networks:
+      - default
+    deploy:
+      placement:
+        constraints:
+        - node.hostname == extra-1
+        - node.role == worker
+      replicas: 1
+      restart_policy:
+        condition: any
+      labels:
+        traefik.docker.network: "${COMPOSE_PROJECT_NAME}_traefik_net"
+        traefik.enable: "false"
+  packages:
+    image: "packix/packix_backend"
+    environment:
+      - NODE_ENV=production
+      - API_DATASTORE_TYPE=MongoDB
+      - MONGODB_HOST=${MONGODB_HOST}
+      - MONGODB_PORT=${MONGODB_PORT}
+      - MONGODB_USERNAME=${MONGODB_USERNAME}
+      - MONGODB_PASSWORD=${MONGODB_PASSWORD}
+      - MONGODB_DATABASE=${MONGODB_DATABASE}
+      - MONGODB_AUTH_DATABASE=${MONGODB_AUTH_DATABASE}
+      - MONGODB_CONNECTION_URL=mongodb://${MONGODB_USERNAME}:${MONGODB_PASSWORD}@${MONGODB_HOST}:${MONGODB_PORT}/${MONGODB_DATABASE}?authSource=${MONGODB_AUTH_DATABASE}
+      - FILE_DATASTORE_TYPE=GridFS
+      - USE_GOOGLE_LOGIN=YES
+      - GOOGLE_LOGIN_CLIENT_ID=${GOOGLE_LOGIN_CLIENT_ID}
+      - GOOGLE_LOGIN_CLIENT_SECRET=${GOOGLE_LOGIN_CLIENT_SECRET}
+      - USE_FACEBOOK_LOGIN=YES
+      - FACEBOOK_LOGIN_CLIENT_ID=${FACEBOOK_LOGIN_CLIENT_ID}
+      - FACEBOOK_LOGIN_CLIENT_SECRET=${FACEBOOK_LOGIN_CLIENT_SECRET}
+      - USE_DISCORD_LOGIN=YES
+      - DISCORD_LOGIN_CLIENT_ID=${DISCORD_LOGIN_CLIENT_ID}
+      - DISCORD_LOGIN_CLIENT_SECRET=${DISCORD_LOGIN_CLIENT_SECRET}
+      - USE_PATREON_LOGIN=YES
+      - PATREON_LOGIN_CLIENT_ID=${PATREON_LOGIN_CLIENT_ID}
+      - PATREON_LOGIN_CLIENT_SECRET=${PATREON_LOGIN_CLIENT_SECRET}
+      - USE_TWITTER_LOGIN=YES
+      - TWITTER_LOGIN_CLIENT_ID=${TWITTER_LOGIN_CLIENT_ID}
+      - TWITTER_LOGIN_CLIENT_SECRET=${TWITTER_LOGIN_CLIENT_SECRET}
+      - COOKIE_SECRET=${COOKIE_SECRET}
+      - PACKAGES_CONTAINER_NAME=packages
+      - HOST_URL=${HOST_URL}
+      - ADMIN_EMAIL=${ADMIN_EMAIL}
+      - PORT=8081
+      - REPOSITORY_NAME=${REPOSITORY_NAME}
+      - REPOSITORY_CODENAME=${REPOSITORY_CODENAME}
+      - REPOSITORY_DESCRIPTION=${REPOSITORY_DESCRIPTION}
+      - REPOSITORY_SUPPORT_URL=https://${HOST_URL}
+      - SMTP_EMAIL=packix-gift@${HOST_URL}
+      - SMTP_NAME=Packix Repository
+      - SENDGRID_API_KEY=${SENDGRID_API_KEY}
+      - sdk_url=https://${HOST_URL}
+      - DOCKER_BUILDING=0
+      - GOOGLE_ANALYTICS_TRACKING_ID=${GOOGLE_ANALYTICS_TRACKING_ID}
+      - REDIS_HOST=${COMPOSE_PROJECT_NAME}_redis
+      - REDIS_PORT=6379
+      - MEMCACHED_HOST=${COMPOSE_PROJECT_NAME}_memcached
+      - MEMCACHED_HOSTS=${COMPOSE_PROJECT_NAME}_memcached
+      - MEMCACHED_PORT=${MEMCACHED_PORT}
+      - MEMCACHED_USERNAME=$MEMCACHED_USERNAME}
+      - MEMCACHED_PASSWORD=${MEMCACHED_PASSWORD}
+      - MEMCACHED_TOUCHAFTER=${MEMCACHED_TOUCHAFTER}
+      - SESSION_AGE=${SESSION_AGE}
+      - SILEO_APP_PREFIX=${SILEO_APP_PREFIX}
+      - CLOUDFLARE_EMAIL=${CLOUDFLARE_EMAIL}
+      - CLOUDFLARE_API_KEY=${CLOUDFLARE_API_KEY}
+      - CLOUDFLARE_ZONE_ID=${CLOUDFLARE_ZONE_ID}
+      - DEB_SERVER_HOST=${COMPOSE_PROJECT_NAME}_debserver
+      - DEB_SERVER_PORT=3000
+      - IS_BACKGROUND_SERVER=YES
+      - BASE_HOST_URL=${BASE_HOST_URL}
+      - COOKIE_DOMAIN=.${BASE_HOST_URL}
+      - REPO_MAIN_URL=${REPO_MAIN_URL}
+      - DEVELOPER_PANEL_URL=${DEVELOPER_PANEL_URL}
+      - AWS_S3_REGION=${AWS_S3_REGION}
+      - AWS_S3_ACCESS_KEY_ID=${AWS_S3_ACCESS_KEY_ID}
+      - AWS_S3_ACCESS_KEY_SECRET=${AWS_S3_ACCESS_KEY_SECRET}
+    depends_on:
+      - redis
+      - memcached
+      - memcached-1
+      - memcached-2
+      - debserver
+    networks:
+      - default
+    deploy:
+      placement:
+        constraints:
+        - node.hostname == packagebackground-1
+        - node.role == worker
+      replicas: 1
+      restart_policy:
+        condition: any
+      labels:
+        traefik.docker.network: "${COMPOSE_PROJECT_NAME}_traefik_net"
+        traefik.enable: "false"
+  nginx:
+    image: nginx:1.13.11-alpine
+    volumes:
+      - ./.docker/nginx/conf.d:/etc/nginx/conf.d
+    networks:
+      - default
+      - traefik_net
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+      placement:
+        constraints:
+        - node.role == manager
+      labels:
+        traefik.backend: "${COMPOSE_PROJECT_NAME}_nginx"
+        traefik.frontend.rule: "Host:${HOST_URL};PathPrefix:/test"
+        traefik.port: "80"
+        traefik.docker.network: "${COMPOSE_PROJECT_NAME}_traefik_net"
+        traefik.enable: "true"
