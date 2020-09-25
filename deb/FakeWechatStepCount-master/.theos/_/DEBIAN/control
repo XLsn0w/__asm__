@@ -1,0 +1,10 @@
+Package: cn.cydia.wxcounter
+Name: 微信计步器
+Depends: mobilesubstrate
+Architecture: iphoneos-arm
+Description: 微信计步器随意改
+Maintainer: Cydia+XLsn0w
+Author: Cydia
+Section: Tweaks
+Version: 1.0.0-1+debug
+Installed-Size: 152

@@ -1,0 +1,251 @@
+<html>
+	<head>
+		<title>LockWatch 2 – What's New</title>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width">
+		<meta lang="en">
+		
+		<style>
+			body {
+				background-color: white;
+				max-width: 790px;
+				margin: 0 auto;
+				padding: 30px 0;
+			}
+			.markdown-body {
+				padding-right: 30px;
+			}
+			@media all and (min-width: 700px) {
+				body {
+					padding: 30px;
+				}
+			}
+		</style>
+		
+		<link rel="stylesheet" href="../assets/github-markdown.css" />
+		<link rel="stylesheet" href="../assets/pilcrow.css" />
+		<link rel="stylesheet" href="../assets/hljs-github.min.css" />
+	</head>
+	
+	<body>
+		<article class="markdown-body">
+			<h2>Version 2.0f</h2>
+			<p><small>September 15 2020</small></p>
+			
+			<p>Here it is: the final version of LockWatch 2 – live and in color! After working on it for almost a whole year, LockWatch 2 is now officially leaving its beta phase. And even after reporting the "feature completeness" in the last beta, one additional feature made it to the final version: cases and bands! (Only Series 4 and Series 5 supported. Please send your complaints to Apple for not providing Series 3 assets)</p>
+			<p>This idea already existed while I was working on Onboarding in Beta 3, but I discarded it pretty quickly. Now it turned out (thanks to <a href="https://twitter.com/Yznco">@Yznco</a> on Twitter) that there are actually people who would like this feature. So, here it is. Apart from that, there's nothing new in this version. I've just removed a developer setting that was intended to be used in the beta phase.</p>
+			<p>At this point I'd like to say "thank you" again to everyone who supported me – morally, financially, or through issue reports – it's because of you that LockWatch 2 could be completed at this quality level. As a gift, LockWatch 2 will not only be released on Team FESTIVAL, but also soon on Dynastic – at no additional cost. (Updates will still be released on Team FESTIVAL first)</p>
+			<p>As a closing note, there's only one thing left to say: Have fun! Tell your friends you've got an Apple Watch on your iPhone lock screen. Continue supporting development through issue report, because even though LockWatch 2 is finished per se, there's always room for improvement. (*cough*Complications*cough*)</p>
+		</article>
+		
+		<article class="markdown-body">
+			<h2>Version 2.0b4-u1</h2>
+			<p><small>September 7, 2020</small></p>
+			
+			<p>This build fixes an issue where settings would be reset unexpectedly, caused by mixing up paths intended for the iOS Simulator with those for the release build.</p>
+		</article>
+		
+		<article class="markdown-body">
+			<h2>Version 2.0b4</h2>
+			<p><small>September 7, 2020</small></p>
+			
+			<p>As of Beta 4, LockWatch 2 is now officially considered feature complete. Thank you to everyone who has reported issues in the beta phase so far! Because of you, LockWatch 2 is near perfect! This beta introduces the last two features: Third-party watch faces, as well as sharing watch faces, inspired by watchOS 7.</p>
+			
+			<ul>
+				<li>Support for third-party watch faces! You can now install third-party watch faces using a package manager of your choice. This marks also the return of the "Binary" watch face, one of the first external watchfaces of LockWatch from 2015.</li>
+				<li>Share watch faces with your friends: Inspired by watchOS 7, you can now share watch faces (including customization) with your friends. Even third-party watch faces are supported! And if a watch face is missing, LockWatch will automatically open Cydia, Zebra or Sileo for you to install its package. NOTE: Watch face files from iOS 14 are currently not supported.</li>
+				<li>Fixes an issue where the model selection appears twice in Settings. (Thank you, /u/Guanran928)</li>
+				<li>Fixes an issue (again) where the "Date" complication wouldn't show up in various faces. This is my fault all alone, after I reworked complications. (Thanks you, Damian V)</li>
+				<li>Improvement to animations.</li>
+				<li>Various improvements.</li>
+			</ul>
+		</article>
+		
+		<article class="markdown-body">
+			<h2>Version 2.0b3-u2</h2>
+			<p><small>August 24, 2020</small></p>
+
+			<p>This update includes a bunch of fixes and improvements, and a truckload of new complications. Some existing complications have been reworked to fix a few issues.</p>
+			
+			<ul>
+				<li>
+					<span>A truckload of new complications, both launchers and data sources:</span>
+					<ul>
+						<li>Alarm</li>
+						<li>Astrononmy (Earth, Moon, Solar System)</li>
+						<li>Calendar</li>
+						<li>Cellular Data</li>
+						<li>Find My</li>
+						<li>Home</li>
+						<li>Mail</li>
+						<li>Maps</li>
+						<li>Messages</li>
+						<li>Music</li>
+						<li>News (Launcher only)</li>
+						<li>People</li>
+						<li>Phone</li>
+						<li>Podcasts</li>
+						<li>Radio</li>
+						<li>Rain</li>
+						<li>Reminders (Launcher only)</li>
+						<li>Remote</li>
+						<li>Siri</li>
+						<li>Solar</li>
+						<li>Timer</li>
+						<li>Voice Memos</li>
+					</ul>
+				</li>
+				<li>LockWatch 2 can finally be positioned everywhere you want. Just set the positions for Portrait and Landscape modes undes Settings → "Advanced".</li>
+				<li>The "Now Playing" complication has been extended and now supports "Music", "Podcasts" and "Radio". Also, there's finally a now playing indicator.</li>
+				<li>Nike and Hermès watch faces won't be listed at the top of available watch faces anymore.</li>
+				<li>Fixes a crash when moving watch faces.</li>
+				<li>Fixes an issue where the watch face library gets stuck when the device is unlocked while "New" is selected.</li>
+				<li>Fixes an issue where Photon wouldn't make LockWatch 2 exit the watch face library automatically.</li>
+				<li>Fixes an issue where the "Battery" complication shows an incorrect color while charging with Low Power Mode enabled.</li>
+				<li>Fixes an issue where the user could delete watch faces outside of the switcher.</li>
+				<li>Fixes an issue where a watch face isn't selected when it's being customized.</li>
+				<li>Fixes an issue where the display wouldn't turn off after interacting with LockWatch.</li>
+				<li>Improved switching between an emulated and a physical Apple Watch.</li>
+				<li>Layout improvements.</li>
+			</ul>
+		</article>
+		
+		<article class="markdown-body">
+			<h2>Version 2.0b3-u1</h2>
+			<p><small>July 24, 2020</small></p>
+			
+			<p>After you had to wait for it (way too long), the first update for LockWatch 2 Beta 3 is here. Including general improvements (more on that later), this update includes the "big 5" Weather complications. Here's a list of every complication added in this update:</p>
+			
+			<ul>
+				<li>Weather / Weather Temp</li>
+				<li>Weather Conditions</li>
+				<li>Wind</li>
+				<li>Air Quality Index (AQI)</li>
+				<li>UV Index</li>
+			</ul>
+			
+			<p>Additionally, this update contains the following bug fixes and improvements:</p>
+			<ul>
+				<li>
+					Complications are finally useful! Supported complications will now open their assigned app or invoke their assigned actions.
+					<ul>
+						<li>Battery: Tapping will toggle Low Power Mode</li>
+						<li>Date: Opens the Calendar app, showing today's events</li>
+						<li>Now Playing: Opens the app that's currently playing music</li>
+						<li>Weather complications will open the Weather app showing current conditions</li>
+						<li>Activity: Opens the Activity app and shows the current Activity ring progress</li>
+						<li>World Clock: Opens the Clock app and shows configured world clocks</li>	
+					</ul>
+				</li>
+				<li>Adds onboarding and post-update notifications. Onboarding introduces new and existing users to the capabilities of LockWatch 2, while post-update notifications tell you what changed in an update.</li>
+				<li>Adds layout compatibility for <a href="cydia://package/com.cemck/photon">Photon</a>.</li>
+				<li>Adds support for video-based watch faces (beta). Required assets won't be shipped with LockWatch 2.</li>
+				<li>Adds support for light wallpapers.</li>
+				<li>You can now select between "Off", "Translucent" or "Solid Black" as the watch face background.</li>
+				<li>Fixes a crash that occured when selecting a system language or changing "Bold Fonts".</li>
+				<li>Fixes layout issues on iPhone in landscape mode.</li>
+				<li>Fixes an issue that was causing some Apple Watch models to not show various complications.</li>
+				<li>Improves suspending watch faces when the display is turned off.</li>
+				<li>Improves the appearance of the "Nike Analog" watch face on iOS 13.5.</li>
+				<li>Improves the appearance of the "Customize"/"Cancel" buttons for Apple Watch Series 4/5.</li>
+				<li>Adds "preferenceloader" as a dependency. I guess it's common law to always forget that.</li>
+				<li>Improvements to the zoom animation when selecting a watch face.</li>
+				<li>Improvements to localization.</li>
+				<li><strong>For developers</strong>: Compiled for arm64 and arm64e with an iOS 11.2/13.3 hybrid SDK on High Sierra (see <a href="https://github.com/SniperGER/iOS13-Private-SDK">https://github.com/SniperGER/iOS13-Private-SDK</a> for more details)</li>
+			</ul>
+			
+			<p><strong>Currently known issues:</strong></p>
+			<ul>
+				<li>Weather complications are currently not compatible with iPad due to missing frameworks.</li>
+				<li>The "UV Index" complication may cause layout issues when used with the "Infograph Modular" face. This does, in fact, also happen without LockWatch as a data source. thx apple.</li>
+				<li>Weather complications may not be updated automatically after restarting.<br><strong>Workaround</strong>: Load weather data using the stock "Weather" widget and display LockWatch again.</li>
+				<li>The complication "Battery" may show incorrect colors when toggling Low Power Mode.</li>
+			</ul>
+		</article>
+		<article class="markdown-body">
+			<h2>Version 2.0b3</h2>
+			<p><small>April 19, 2020</small></p>
+			
+			<p>LockWatch 2 beta 3 is here, and it finally introduces the long awaited Complications. This beta contains the first batch of working complications, with more complications being added in subsequent updates, including the following:</p>
+			
+			<ul>
+				<li>Battery</li>
+				<li>Date</li>
+				<li>Digital Time</li>
+				<li>Now Playing</li>
+				<li>Activity</li>
+				<li>World Clock</li>
+			</ul>
+			
+			<p>Apart from complications, beta 3 includes the following fixes and improvements:<p>
+			
+			<ul>
+				<li>Added a security measurement so you can only switch/customize watch faces when your device is unlocked.</li>
+				<li>Fixed watch faces reacting to input outside of the main container view.</li>
+				<li>Replaced UIVisualEffectViews with MTMaterialViews to appear more like iOS 13.</li>
+				<li>Performance improvements.</li>
+				<li>Localization fixes.</li>
+			<ul>
+		</article>
+		<article class="markdown-body">
+			<h2>Version 2.0b2-2</h2>
+			<p><small>April 2, 2020</small></p>
+			
+			<ul>
+				<li>Fixed an issue that prevented watch face editing if a user had set their 3D Touch sensitivity to "Firm".</li>
+				<li>Fixed an issue that caused watch faces to appear above notification detail views.</li>
+			<ul>
+		</article>
+		
+		<article class="markdown-body">
+			<h2>Version 2.0b2-1</h2>
+			<p><small>April 2, 2020</small></p>
+			
+			<p>This is a hotfix release to fix a few reported issues by the community.</p>
+			
+			<ul>
+				<li>Fixed a crash while getting a CALayer's parent view hierarchy.</li>
+				<li>Added an option to hide the watch face background. (disabled by default)</li>
+				<li>Added an option to hide the lock screen battery charging view. (enabled by default)</li>
+			<ul>
+		</article>
+		
+		<article class="markdown-body">
+			<h2>Version 2.0b2</h2>
+			<p><small>March 25, 2020</small></p>
+			
+			<p>LockWatch 2 Beta 2 is a complete rewrite of Beta 1. While Beta 1 was just focussing on getting things up and running and showing what's possible in future builds, Beta 2 has been developed from scratch, mostly to fix existing bugs and add new features. So much has changed actually, I may not be able to provide a full changelog.</p>
+			
+			<ul>
+				<li>Completely rewritten from scratch, using the iOS 13 SDK. Which also means every device that uses an A12 processor or later is supported now. Basically.</li>
+				<li>Drastically reduced battery drain.</li>
+				<li>Preferences: Selected watch faces won't reset and you can select which Apple Watch you want to emulate, if you want to emulate one at all.</li>
+				<li>Watch face management: Add, reorder or remove watch faces right from the lock screen. Also, you can reset watch faces to system defaults now.</li>
+				<li>Customization: Customize any supported watch face to your taste. Again, right from the lock screen.</li>
+				<li>"Watch" integration (limited to iPhone): Sync the watch faces on your lock screen with those on your physical watch, including customization. Or add new watch faces from the "Watch Faces" tab.</li>
+				<li>So. Many. Layout fixes. In fact, every layout issue in Beta 1 (as far as I know) has been fixed, and there's almost no glitching whatsoever (at least while I was testing it).</li>
+				<li>Did I mention that battery drain has been drastically reduced?</li>
+			<ul>
+		</article>
+		
+		<article class="markdown-body">
+			<h2>Version 2.0b1</h2>
+			<p><small>January 21, 2020</small></p>
+
+			<p>Welcome to the very first beta of LockWatch 2!</p>
+
+			<p>Please note that nothing is currently considered finished and is subject to change. This release also disables iPad support for now, since there is currently no proper way for this package to download required files.</p>
+
+			<p>Currently known issues:</p>
+			<ul>
+				<li>High battery drain</li>
+				<li>No preferences (selected face resets after restarting SpringBoard)</li>
+				<li>No watch face management (add/remove/reorder)</li>
+				<li>No complication support</li>
+				<li>Missing transitions</li>
+				<li>Video/picture based faces don't show anything</li>
+				<li>Probably a lot of layout issues</li>
+			</ul>
+		</article>
+	</body>
+</html>

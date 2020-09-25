@@ -1,0 +1,39 @@
+//
+// Localizable.strings
+// LockWatch2
+//
+// Created by janikschmidt on 3/17/2020
+// Copyright © 2020 Team FESTIVAL. All rights reserved
+//
+
+{
+	"GENERIC_CANCEL" = "Cancel";
+	"GENERIC_CONFIRM" = "OK";
+	"GENERIC_ERROR" = "Error";
+	
+	"NO_DEVICE_TITLE" = "LockWatch - No device found";
+	"NO_DEVICE_MESSAGE" = "LockWatch could not find any physical or emulated Apple Watch. Without an Apple Watch, LockWatch does not work.\n\nEither pair an Apple Watch to your device or select an emulated device from LockWatch's preferences.";
+	
+	"LIBRARY_WATCH_FACES" = "Watch Faces";
+	"LIBRARY_MY_WATCH" = "My Watch";
+	"LIBRARY_APPLE_FACES_HEADER" = "Apple Watch";
+	"LIBRARY_EXTERNAL_FACES_HEADER" = "Third-party Faces";
+	"LIBRARY_EXTERNAL_FACES_FOOTER" = "There currently aren't any installed third-party watch faces.";
+	
+	"WHATS_NEW_TITLE" = "LockWatch 2 - What's New";
+	"WHATS_NEW_DONE" = "Done";
+	
+	"SYNC_TO_LOCK_SCREEN" = "Sync to Lock Screen";
+	"SYNC_TO_LOCK_SCREEN_PROMPT" = "This will replace the watch faces on your lock screen with the faces on your Apple Watch. Any customization to existing faces will be lost. Some watch faces, customizations or complications may not be available for certain models.\n\nAre you sure you want to continue?";
+	
+	"ADD_TO_PROMPT" = "Choose a location to add this watch face to.";
+	"ADD_TO_LOCK_SCREEN" = "Lock Screen";
+	
+	"IMPORT_WATCH_FACE" = "Add watch face";
+	"ERROR_MISSING_FACE_TITLE" = "Additional watch face package required";
+	"ERROR_MISSING_FACE_MESSAGE" = "This watch face requires an additional watch face package. Would you like to install it?";
+	"ERROR_MISSING_FACE_INSTALL" = "Install";
+	
+	"ERROR_INCOMPATIBLE_FACE_TITLE" = "Incompatible watch face";
+	"ERROR_INCOMPATIBLE_FACE_MESSAGE" = "The watch face could not be imported because it's incompatible with the selected Apple Watch model.";
+}

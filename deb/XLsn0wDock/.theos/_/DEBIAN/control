@@ -1,0 +1,10 @@
+Package: cn.xlsn0w.dock
+Name: XLsn0wDock
+Depends: mobilesubstrate, firmware (>= 11.0)
+Architecture: iphoneos-arm
+Description: 自定义Dock个数; 跳动动画 在应用内上滑显示Dock栏
+Depiction: https://github.com/XLsn0w/tweak/
+Author: XLsn0w
+Section: Tweaks
+Version: 1.1.6-2
+Installed-Size: 136

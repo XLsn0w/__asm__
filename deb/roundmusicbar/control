@@ -1,0 +1,9 @@
+Package: com.xcxiao.roundmusicbar
+Name: 圆形音乐状态栏
+Depends: mobilesubstrate
+Version: 1.0.0
+Architecture: iphoneos-arm
+Description: 圆形音乐状态栏
+Maintainer: XCXiao
+Author: XCXiao
+Section: Tweaks

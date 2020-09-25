@@ -1,0 +1,27 @@
+//
+// Advanced.strings
+// LockWatch2
+//
+// Created by janikschmidt on 3/30/2020
+// Copyright © 2020 Team FESTIVAL. All rights reserved
+//
+
+{
+	"ADVANCED_SETTINGS" = "Advanced";
+	
+	"APPEARANCE" = "Appearance";
+	
+	"BACKGROUND_TYPE" = "Watch Face Background";
+	"BACKGROUND_TYPE_OFF" = "Off";
+	"BACKGROUND_TYPE_TRANSLUCENT" = "Translucent";
+	"BACKGROUND_TYPE_OPAQUE" = "Solid Black";
+	
+	"BATTERY_CHARGING_VIEW_HIDDEN" = "Hide Battery Charging View";
+	
+	"POSITIONING" = "Position";
+	
+	"COMPLICATION_CONTENT" = "Complications";
+	"COMPLICATION_CONTENT_NONE" = "No Complications";
+	"COMPLICATION_CONTENT_DEFAULT" = "Default Templates";
+	"COMPLICATION_CONTENT_MIXED" = "LockWatch 2 Templates";
+}

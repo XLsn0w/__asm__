@@ -1,0 +1,9 @@
+Package: com.xcxiao.floatingdockxi
+Name: 浮动Dock
+Depends: mobilesubstrate
+Version: 0.0.2
+Architecture: iphoneos-arm
+Description: Dock浮动起来
+Maintainer: XCXiao
+Author: XCXiao
+Section: Tweaks

@@ -1,0 +1,9 @@
+Package: cn.xlsn0w.screenwakeup
+Name: 主屏幕抬起唤醒
+Depends: mobilesubstrate
+Version: 1.0.0
+Architecture: iphoneos-arm
+Description: 主屏幕抬起唤醒
+Maintainer: 公众号Cydia
+Author: 公众号Cydia
+Section: Tweaks

@@ -1,0 +1,12 @@
+--- !tapi-tbd-v2
+archs:                 [ arm64, arm64e ]
+platform:              ios
+flags:                 [ flat_namespace ]
+install-name:          /Library/MobileSubstrate/DynamicLibraries/LockWatch2Complications.dylib
+current-version:       0
+compatibility-version: 0
+objc-constraint:       retain_release
+exports:
+  - archs:              [ arm64, arm64e ]
+    objc-classes:       [ _LWComplicationDataSourceBase ]
+...

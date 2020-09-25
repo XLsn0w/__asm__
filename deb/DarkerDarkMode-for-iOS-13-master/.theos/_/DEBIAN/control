@@ -1,0 +1,11 @@
+Package: cn.darker.mode
+Name: OLED屏幕黑暗模式
+Depends: mobilesubstrate, firmware (>= 13.0)
+Architecture: iphoneos-arm
+Description: 使得 iOS 13/14 黑暗模式更黑 有利于OLED屏幕
+Depiction: https://xlsn0w.github.io/tweak/
+Maintainer: XLsn0w
+Author: XLsn0w
+Section: Tweaks
+Version: 1.0.0-1+debug
+Installed-Size: 176
