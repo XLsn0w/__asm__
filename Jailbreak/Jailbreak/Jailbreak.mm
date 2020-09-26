@@ -11,7 +11,10 @@
 @property (nonatomic,retain) SBGrabberTongue * grabberTongue;
 -(UIGestureRecognizer *)screenEdgePanGestureRecognizer;
 -(void)_beginPresentationTransition;
--(void)setPresentationProgress:(double)arg1 animated:(BOOL)arg111 interactive:(BOOL)arg2 withCompletion:(id)arg3 ;
+-(void)setPresentationProgress:(double)arg1
+                      animated:(BOOL)arg111
+                   interactive:(BOOL)arg2
+                withCompletion:(id)arg3 ;
 -(void)searchGesture:(id)arg1 completedShowing:(BOOL)arg2 ;
 @end
 

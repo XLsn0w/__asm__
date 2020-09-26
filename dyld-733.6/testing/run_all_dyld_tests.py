@@ -18,6 +18,8 @@ if __name__ == "__main__":
     tests = batsPlist["Tests"]
     passedCount = 0
     failedCount = 0
+    
+    
     for test in tests:
         cwd = test["WorkingDirectory"]
         if cwd:

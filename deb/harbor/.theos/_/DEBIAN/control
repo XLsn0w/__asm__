@@ -1,0 +1,10 @@
+Package: com.eswick.harbor10
+Name: Harbor (iOS 10)
+Depends: mobilesubstrate
+Architecture: iphoneos-arm
+Description: OS X-style dock redesigned for touch screens!
+Maintainer: Evan Swick
+Author: Evan Swick
+Section: Tweaks
+Version: 1.1.5-2+debug
+Installed-Size: 492
